@@ -282,59 +282,58 @@ void save_counties(list* listPtr, const char* filename) {
 	filePtr = NULL;
 }
 
-//Trims the trailing white space
-const char* rtrim(const char* string) {
-	
-	//declares a mutable string and copys the string param to itself
-	char resultBuild[40];
-	strcpy(resultBuild, string);
-	//declares indexs
-	int index = -1;
-	int i = 0;
+//Creates substring from larger string
+const char* substring(const char* string, int start, int end){
 
-	//while the null terminator isnt found
-	while (string[i] != '\0') {
-		//check if char is a space
-		if (isspace(string[i]) == 0) {
-			//if a nonspace is found make this index the last known nonspace
-			index = i;
-		}
-		//move to next string char
-		i++;
-		
+	// Get length of substring
+	int strlen = end - start;
+
+	// Allocate enough memory for substring
+	char* substringPtr = malloc((strlen + 1) * sizeof(char));
+	if (substringPtr == NULL)
+	{
+		puts("Could not allocate memory for string.");
+		exit(1);
 	}
-	//found the last location a char was at 
 
-	//add a null terminator right after that nonspace character
-	resultBuild[index + 1] = '\0';
-	
-	//make a const char* variable that just has the nonspace chars followed by the null terminator 
-	const char* result = resultBuild;
+	// Initialize new substring to null terminators
+	memset(substringPtr, 0, strlen + 1);
 
-	return result;
+	// Copy substring
+	strncpy(substringPtr, string + start, strlen);
+
+	return substringPtr;
 }
 
-//Creates a substring of a larger string
-const char* substring(const char* string, int start, int end) {
-
-	//declares a mutable string length of the param string
-	char resultBuild[strlen(string)];
-	//declares index
-	int index = 0;
-
-	//for from the start to the end excluding the end
-	for (int i = start; i < end; i++) {
-		//add the specified char to the resultBuild
-		resultBuild[index] = string[i];
-		//advance the resultBuild index
-		index++;
+//Trims whitespace
+const char* rtrim(const char* string){
+	
+	// Create new array large enough to handle string + null terminator
+	char* strippedPtr = malloc((strlen(string) + 1) * sizeof(char));
+	if (strippedPtr == NULL)
+	{
+		puts("Could not allocate memory for string.");
+		exit(1);
 	}
-	//add a null terminator to the end of the substring
-	resultBuild[index] = '\0';
 
-	//transfer to a const char*
-	const char* result = resultBuild;
-	return result;
+	// Null terminate new array
+	memset(strippedPtr, 0, strlen(string) + 1);
+
+	// Copy existing string into new array
+	strncpy(strippedPtr, string, strlen(string));
+
+	// Loop over string, start at end, to strip whitespace
+	size_t position = strlen(string) - 1;
+	while ((position >= 0) && isspace(strippedPtr[position]))
+	{
+		// Set char to null terminator
+		strippedPtr[position] = '\0';
+
+		// Advance one position to left
+		position--;
+	}
+
+	return strippedPtr;
 }
 
 //Returns my name
